@@ -45,9 +45,14 @@ using grpc::Status;
 
 using multiplayerscene::MultiplayerScene;
 
+using multiplayerscene::MoveByID;
+using multiplayerscene::RotateByID;
 using multiplayerscene::Entity;
+using multiplayerscene::User;
+using multiplayerscene::UserID;
 using multiplayerscene::Point;
 using multiplayerscene::ColourRequest;
+using multiplayerscene::EmptyRequest;
 using multiplayerscene::EmptyResponse;
 
 //Feature MakeFeature(const std::string& name, long latitude, long longitude) {
@@ -69,6 +74,40 @@ class MultiplayerSceneClient {
 public:
 	MultiplayerSceneClient(std::shared_ptr<Channel> channel)
 		: stub_(MultiplayerScene::NewStub(channel)) {
+	}
+
+	User InitialiseUser() {
+		ClientContext ctx;
+		EmptyRequest req;
+		User user;
+		stub_->InitialiseUser(&ctx, req, &user);
+		return user;
+	}
+
+	void TerminateUser(std::string uid) {
+		ClientContext ctx;
+		EmptyResponse resp;
+		UserID uid_;
+		uid_.set_id(uid);
+		stub_->TerminateUser(&ctx, uid_, &resp);
+	}
+
+	void ModifyUser(User user) {
+		ClientContext ctx;
+		EmptyResponse resp;
+		stub_->ModifyUser(&ctx, user, &resp);
+	}
+
+	std::vector<User> GetUsers() {
+		ClientContext context;
+		EmptyRequest request;
+		std::unique_ptr<ClientReader<User> > reader(
+			stub_->GetUsers(&context, request));
+		std::vector<User> result{};
+		User u{};
+		while (reader->Read(&u))
+			result.push_back(u);
+		return result;
 	}
 
 	void PrintEntities() {
@@ -104,7 +143,8 @@ public:
 		return result;
 	}
 
-	void ChangeColour(std::string id, uint32_t colour) {
+
+	void SetEntityColour(std::string id, uint32_t colour) {
 		ColourRequest col;
 		col.set_id(id);
 		col.set_colour(colour);
@@ -116,6 +156,17 @@ public:
 			std::cout << "Changed colour of entity " << id << " to " << colourToString(colour) << ".\n";
 		else
 			std::cout << "Colour change of entity " << id << " failed.\n";
+	}
+
+	void PushEntity(const MoveByID & move) {
+		ClientContext context{};
+		EmptyResponse resp{};
+		stub_->PushEntity(&context,move,&resp);
+	}
+	void RotateEntity(const RotateByID & rotate) {
+		ClientContext context;
+		EmptyResponse resp{};
+		stub_->RotateEntity(&context, rotate, &resp);
 	}
 
 private:

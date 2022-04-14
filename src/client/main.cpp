@@ -10,9 +10,9 @@ void client_test() {
 
 	std::cout << "-------------- MultiplayerScene --------------" << std::endl;
 	guide.PrintEntities();
-	guide.ChangeColour("5", 0);
-	guide.ChangeColour("7", 255);
-	guide.ChangeColour("16", 255);
+	guide.SetEntityColour("5", 0);
+	guide.SetEntityColour("7", 255);
+	guide.SetEntityColour("16", 255);
 	guide.PrintEntities();
 }
 
@@ -61,25 +61,34 @@ int main(int argc, char** argv) {
 	GLFWwindow* window{ nullptr };
 	mainInit(window, 600, 400);
 
-	Scene scene{window};
 	MultiplayerSceneClient client{ grpc::CreateChannel("localhost:50051",
 						grpc::InsecureChannelCredentials())};
+	User clientUser{ client.InitialiseUser() };
 
+	Scene scene{window,clientUser.id()};
 
-	glClearColor(0.5f, 0.5f, 0.7f, 1.0f);
+	glClearColor(0.4f, 0.4f, 0.7f, 1.0f);
 	while (glfwGetKey(window,GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 		Point userLocation{ vec3_to_point(scene.camera().m_position) };
 		std::vector<Entity> entities{client.GetEntities(userLocation)};
+		std::vector<User> users{ client.GetUsers() };
 
 		scene.updateEntities(entities);
+		scene.updateUsers(users);
+
 		scene.draw_frame();
 
 		glfwPollEvents();
 		scene.process_keyboard();
 
+		client.ModifyUser(scene.updateAndReturnThisUser());
+
 		glfwSwapBuffers(window);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+
+	client.TerminateUser(clientUser.id());
+
 	return 0;
 }

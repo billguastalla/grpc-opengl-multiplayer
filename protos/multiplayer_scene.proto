@@ -6,19 +6,36 @@ package multiplayerscene;
 service MultiplayerScene {
 	rpc GetEntities(Point) returns (stream Entity) {}
 	rpc SetEntityColour(ColourRequest) returns (EmptyResponse) {}
+	rpc PushEntity(MoveByID) returns (EmptyResponse) {}
+	rpc RotateEntity(RotateByID) returns (EmptyResponse) {}
+
+	rpc InitialiseUser(EmptyRequest) returns (User) {}
+	rpc TerminateUser(UserID) returns (EmptyResponse) {}
+	rpc ModifyUser(User) returns (EmptyResponse) {}
+	rpc GetUsers(EmptyRequest) returns (stream User) {}
 }
 
-//message User {
-//	string id = 1;
+message MoveByID {
+	string id = 1;
+	Point direction = 2;
+}
+message RotateByID {
+	string id = 1;
+	Quaternion rotation = 2;
+}
 
-//	Point location = 2;
+message UserID { string id = 1; }
+
+message User {
+	string id = 1;
+	Point location = 2;
 	// camera
-//	Point forward = 3;
-//	Point up = 4;
-//	Point right = 5;
-//}
+	Quaternion orientation = 3;
+	int32 colour = 4;
+}
 
-message EmptyResponse { string id = 1; }
+message EmptyRequest {}
+message EmptyResponse {}
 
 message ColourRequest {
 	string id = 1;
@@ -31,9 +48,16 @@ message Point {
   float z = 3;
 }
 
+message Quaternion {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+  float w = 4;
+}
+
 message Entity {
 	string id = 1;
 	Point location = 2;
-	int32 colour = 3;
+	Quaternion orientation = 3;
+	int32 colour = 4;
 }
-

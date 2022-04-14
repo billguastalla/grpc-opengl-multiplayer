@@ -6,38 +6,50 @@
 
 void Scene::draw_frame()
 {
-	Mesh m; // unnecessary to redo every frame.
-	MeshGenerator::generateCube(m); // unnecessary to redo every frame.
+	m_generalShader.use();
+	m_generalShader.setVec3("lightColour", glm::vec3{ 0.9f,0.8f,0.81f }); // unnecessary to redo every frame.
 
-	m_entityShader.use();
-	m_entityShader.setVec3("lightColour", glm::vec3{ 0.9f,0.8f,0.81f }); // unnecessary to redo every frame.
-
-																		 // pass projection matrix to shader (note that in this case it could change every frame)
+	// pass projection matrix to shader (note that in this case it could change every frame)
 	glm::mat4 projection{ m_camera.projectionMatrix() };
 	// camera/view transformation
 	glm::mat4 view = m_camera.GetViewMatrix();
 
-	glm::mat4 m_mainModelMat{1.0};
-	m_entityShader.setMat4("projection", projection);
-	m_entityShader.setMat4("view", view);
-	m_entityShader.setMat4("model", m_mainModelMat);
+	glm::mat4 m_mainModelMat{ 1.0 };
+	m_generalShader.setMat4("projection", projection);
+	m_generalShader.setMat4("view", view);
+	m_generalShader.setMat4("model", m_mainModelMat);
 
 	glm::mat4 lightModel{ 1.0f };
-	lightModel = glm::translate(lightModel, {0.,5.,0.});		// Note: Light is in the middle for 
+	lightModel = glm::translate(lightModel, { 0.,5.,0. });		// Note: Light is in the middle for 
 	lightModel = glm::scale(lightModel, glm::vec3{ 0.2f });
-	m_entityShader.setVec3("lightPos", { 0.,5.,0. });
-	m_entityShader.setVec3("viewPos", m_camera.m_position);
+	m_generalShader.setVec3("lightPos", { 0.,5.,0. });
+	m_generalShader.setVec3("viewPos", m_camera.m_position);
 
-	for (const auto & entity : m_entities) {
+
+	Mesh m; // unnecessary to redo every frame.
+	MeshGenerator::generateCube(m); // unnecessary to redo every frame.
+	for (const auto& entity : m_entities) {
 		Mesh entityMesh{ m };
 		entityMesh.translate(point_to_vec3(entity.location()));
-
-		m_entityShader.setVec3("objectColour", colourIntToVec3(entity.colour()));
-		entityMesh.draw(&m_entityShader);
-
+		m_generalShader.setVec3("objectColour", colourIntToVec3(entity.colour()));
+		entityMesh.draw(&m_generalShader);
 		entityMesh.clear();
 	}
 	m.clear();
+
+	Mesh m2; // unnecessary to redo every frame.
+	MeshGenerator::generateSphere(10, m2); // unnecessary to redo every frame.
+	for (const auto& user : m_users) {
+		if (user.id() != m_uid) {
+			Mesh userMesh{ m2 };
+			userMesh.translate(point_to_vec3(user.location()));
+			m_generalShader.setVec3("objectColour", colourIntToVec3(user.colour()));
+			userMesh.draw(&m_generalShader);
+			userMesh.clear();
+		}
+	}
+	m2.clear();
+
 }
 
 void Scene::process_keyboard()

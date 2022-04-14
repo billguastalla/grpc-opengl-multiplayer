@@ -29,15 +29,17 @@ inline glm::vec3 colourIntToVec3(const int32_t col) {
 
 
 using multiplayerscene::Entity;
+using multiplayerscene::User;
 
 class Scene {
 public:
-	Scene(GLFWwindow* window) :
-		m_entityShader
+	Scene(GLFWwindow* window, std::string uid) :
+		m_generalShader
 	{
-		"../../src/shaders/Mesh_Vertex.vs",
-		"../../src/shaders/Mesh_Fragment.fs"
+		"../../shaders/Mesh_Vertex.vs",
+		"../../shaders/Mesh_Fragment.fs"
 	},
+		m_uid{ uid },
 		p_window{ window },
 		m_camera{},
 		m_entities{}
@@ -45,14 +47,32 @@ public:
 
 	void draw_frame();
 	void updateEntities(std::vector<Entity> entities) { m_entities = entities; }
+	void updateUsers(std::vector<User> users) { m_users = users; };
+
+
+	User updateAndReturnThisUser() {
+		auto foundUser{ std::find_if(m_users.begin(), m_users.end(), [this](const User& u) { return u.id() == m_uid; })};
+		if (foundUser != m_users.end()) {
+			foundUser->mutable_location()->set_x(m_camera.m_position.x);
+			foundUser->mutable_location()->set_y(m_camera.m_position.y);
+			foundUser->mutable_location()->set_z(m_camera.m_position.z);
+			//Geometry::quat(m_camera.m_orientation);
+			return *foundUser;
+		}
+		else
+			return User{};
+	}
 	void process_keyboard();
 	const Camera& camera() { return m_camera; }
 private:
-	Shader m_entityShader;
+	Shader m_generalShader;
 
 	GLFWwindow* p_window;
 	Camera m_camera;
+	std::string m_uid;
+
 	std::vector<Entity> m_entities;
+	std::vector<User> m_users;
 
 
 	bool m_firstMouse{ false };

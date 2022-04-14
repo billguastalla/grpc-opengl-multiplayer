@@ -48,6 +48,7 @@ target_link_libraries(multiplayer_scene_helper
   ${_PROTOBUF_LIBPROTOBUF})
 
 add_executable(multiplayer_scene_server "server/multiplayer_scene_server.cc")
+target_include_directories(multiplayer_scene_server PUBLIC ${glm_SOURCE_DIR})
 target_link_libraries(multiplayer_scene_server mps_grpc_proto multiplayer_scene_helper ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
 
 # Make symbols for anything you need from visualisations here.
@@ -60,7 +61,6 @@ add_library(client_graphics_imports
 	"${visualisations_SOURCE_DIR}/visualisations/graphics/MeshGenerator.cpp"
 	"${visualisations_SOURCE_DIR}/visualisations/graphics/GeometryTools.h"
 	"${visualisations_SOURCE_DIR}/visualisations/graphics/GeometryTools.cpp"
-	
 	"${visualisations_SOURCE_DIR}/visualisations/general/Constants.h"
 	)
 target_link_libraries(client_graphics_imports glfw glad)
