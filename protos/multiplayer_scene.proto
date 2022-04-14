@@ -1,0 +1,39 @@
+
+syntax = "proto3";
+
+package multiplayerscene;
+
+service MultiplayerScene {
+	rpc GetEntities(Point) returns (stream Entity) {}
+	rpc SetEntityColour(ColourRequest) returns (EmptyResponse) {}
+}
+
+//message User {
+//	string id = 1;
+
+//	Point location = 2;
+	// camera
+//	Point forward = 3;
+//	Point up = 4;
+//	Point right = 5;
+//}
+
+message EmptyResponse { string id = 1; }
+
+message ColourRequest {
+	string id = 1;
+	int32 colour = 2;
+}
+
+message Point {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+message Entity {
+	string id = 1;
+	Point location = 2;
+	int32 colour = 3;
+}
+
