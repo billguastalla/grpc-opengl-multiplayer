@@ -71,7 +71,7 @@ public:
 		: stub_(MultiplayerScene::NewStub(channel)) {
 	}
 
-	void GetEntities() {
+	void PrintEntities() {
 		Entity entity;
 		Point point;
 		ClientContext context;
@@ -93,6 +93,17 @@ public:
 		}
 	}
 
+	std::vector<Entity> GetEntities(const Point & userLocation) {
+		ClientContext context;
+		std::unique_ptr<ClientReader<Entity> > reader(
+			stub_->GetEntities(&context, userLocation));
+		std::vector<Entity> result{};
+		Entity e{};
+		while (reader->Read(&e))
+			result.push_back(e);
+		return result;
+	}
+
 	void ChangeColour(std::string id, uint32_t colour) {
 		ColourRequest col;
 		col.set_id(id);
@@ -111,20 +122,3 @@ private:
 	std::unique_ptr<MultiplayerScene::Stub> stub_;
 };
 
-
-int main(int argc, char** argv) {
-	MultiplayerSceneClient guide{
-		grpc::CreateChannel("localhost:50051",
-							grpc::InsecureChannelCredentials()) };
-
-	std::cout << "-------------- MultiplayerScene --------------" << std::endl;
-	guide.GetEntities();
-
-	guide.ChangeColour("5", 0);
-	guide.ChangeColour("7", 255);
-	guide.ChangeColour("16", 255);
-
-	guide.GetEntities();
-
-	return 0;
-}

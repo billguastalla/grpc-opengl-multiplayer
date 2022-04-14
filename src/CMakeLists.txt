@@ -50,6 +50,24 @@ target_link_libraries(multiplayer_scene_helper
 add_executable(multiplayer_scene_server "server/multiplayer_scene_server.cc")
 target_link_libraries(multiplayer_scene_server mps_grpc_proto multiplayer_scene_helper ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
 
-add_executable(multiplayer_scene_client "client/multiplayer_scene_client.cc")
-target_link_libraries(multiplayer_scene_client mps_grpc_proto multiplayer_scene_helper ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
+# Make symbols for anything you need from visualisations here.
+add_library(client_graphics_imports
+	"${visualisations_SOURCE_DIR}/visualisations/graphics/Texture.h"
+	"${visualisations_SOURCE_DIR}/visualisations/graphics/Texture.cpp"
+	"${visualisations_SOURCE_DIR}/visualisations/graphics/Mesh.h"
+	"${visualisations_SOURCE_DIR}/visualisations/graphics/Mesh.cpp"
+	"${visualisations_SOURCE_DIR}/visualisations/graphics/MeshGenerator.h"
+	"${visualisations_SOURCE_DIR}/visualisations/graphics/MeshGenerator.cpp"
+	"${visualisations_SOURCE_DIR}/visualisations/graphics/GeometryTools.h"
+	"${visualisations_SOURCE_DIR}/visualisations/graphics/GeometryTools.cpp"
+	
+	"${visualisations_SOURCE_DIR}/visualisations/general/Constants.h"
+	)
+target_link_libraries(client_graphics_imports glfw glad)
+target_include_directories(client_graphics_imports PUBLIC ${stb_SOURCE_DIR} ${glm_SOURCE_DIR} ${visualisations_SOURCE_DIR})
+
+add_executable(multiplayer_scene_client "client/multiplayer_scene_client.h" "client/graphics.h" "client/graphics.cpp" "client/main.cpp")
+target_include_directories(multiplayer_scene_client PUBLIC ${stb_SOURCE_DIR} ${visualisations_SOURCE_DIR} ${glm_SOURCE_DIR})
+# TODO: link visualisations in.
+target_link_libraries(multiplayer_scene_client mps_grpc_proto multiplayer_scene_helper glfw glad client_graphics_imports ${Boost_LIBRARIES} ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
 

@@ -29,8 +29,6 @@
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
 
-
-
 #ifdef BAZEL_BUILD
 #include "examples/protos/multiplayer_scene.grpc.pb.h"
 #else
@@ -95,21 +93,17 @@ public:
 	//  feature->mutable_location()->CopyFrom(*point);
 	//  return Status::OK;
 	//}
-
 	Status GetEntities(ServerContext* context,
 		const multiplayerscene::Point* point,
 		ServerWriter<Entity>* writer) override {
 
 		// TODO: Return only the entities within a given range.
-		for (Entity& e : m_entities)
+		for (const Entity& e : m_entities)
 			writer->Write(e);
 
 		return Status::OK;
 	}
-
 private:
-	//std::vector<User> m_users;
-
 	std::vector<Entity> m_entities;
 	std::mutex mu_;
 };
@@ -126,7 +120,10 @@ void RunServer() {
 	server->Wait();
 }
 
+
 int main(int argc, char** argv) {
 	RunServer();
 	return 0;
 }
+
+
