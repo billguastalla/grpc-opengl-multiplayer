@@ -56,39 +56,47 @@ static int mainInit(GLFWwindow*& window, int width, int height)
 	glEnable(GL_MULTISAMPLE); /* MSAA */
 	return 0;
 }
-
+#include <chrono>
 int main(int argc, char** argv) {
-	GLFWwindow* window{ nullptr };
-	mainInit(window, 600, 400);
 
-	MultiplayerSceneClient client{ grpc::CreateChannel("localhost:50051",
-						grpc::InsecureChannelCredentials())};
-	User clientUser{ client.InitialiseUser() };
+	std::string serverAddress{ "localhost:50051" };
+	std::shared_ptr<grpc::Channel> channel{ grpc::CreateChannel(serverAddress,
+						grpc::InsecureChannelCredentials()) };
 
-	Scene scene{window,clientUser.id()};
+	if (channel->WaitForConnected(std::chrono::system_clock::now() +
+		std::chrono::milliseconds(5000))) {
+		GLFWwindow* window{ nullptr };
+		mainInit(window, 600, 400);
 
-	glClearColor(0.4f, 0.4f, 0.7f, 1.0f);
-	while (glfwGetKey(window,GLFW_KEY_ESCAPE) != GLFW_PRESS)
-	{
-		Point userLocation{ vec3_to_point(scene.camera().m_position) };
-		std::vector<Entity> entities{client.GetEntities(userLocation)};
-		std::vector<User> users{ client.GetUsers() };
+		MultiplayerSceneClient client{ channel };
+		User clientUser{ client.InitialiseUser() };
 
-		scene.updateEntities(entities);
-		scene.updateUsers(users);
+		Scene scene{ window,clientUser.id() };
 
-		scene.draw_frame();
+		glClearColor(0.4f, 0.4f, 0.7f, 1.0f);
+		while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
+		{
+			Point userLocation{ vec3_to_point(scene.camera().m_position) };
+			std::vector<Entity> entities{ client.GetEntities(userLocation) };
+			std::vector<User> users{ client.GetUsers() };
 
-		glfwPollEvents();
-		scene.process_keyboard();
+			scene.updateEntities(entities);
+			scene.updateUsers(users);
 
-		client.ModifyUser(scene.updateAndReturnThisUser());
+			scene.draw_frame();
 
-		glfwSwapBuffers(window);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glfwPollEvents();
+			scene.process_keyboard();
+
+			client.ModifyUser(scene.updateAndReturnThisUser());
+
+			glfwSwapBuffers(window);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
+		client.TerminateUser(clientUser.id());
 	}
-
-	client.TerminateUser(clientUser.id());
-
+	else {
+		std::cout << "No server found at " << serverAddress << "\n";
+	}
 	return 0;
 }
