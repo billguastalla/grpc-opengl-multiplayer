@@ -8,8 +8,6 @@ with user ids and a list of entities that have been generated in the world.
 The client tells the server where its camera position is, and the scene tells each 
 client where the other users are.
 
-The fun is in the fact that you can see other users moving around on the screen.
-
 ![](https://billguastalla.com/binaries/multiplayer-scene/videos/quick-demo-2022-04-20-14-45-22-brief.gif)
 
 The longer version of this demo video is [here](https://billguastalla.com/binaries/multiplayer-scene/videos/quick-demo-2022-04-20-14-45-22.mp4).
