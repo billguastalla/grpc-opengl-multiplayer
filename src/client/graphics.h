@@ -1,3 +1,5 @@
+// (c) 2022 Bill Guastalla, Apache 2.0 License.
+
 #include <vector>
 
 #include <visualisations/camera/Camera.h>
@@ -12,7 +14,6 @@
 
 using multiplayerscene::Point;
 
-
 inline Point vec3_to_point(const glm::vec3& v) {
 	Point p; // NOTE: Can we just to a direct memory copy?
 	p.set_x(v.x);
@@ -26,7 +27,6 @@ inline glm::vec3 point_to_vec3(const Point& p) {
 inline glm::vec3 colourIntToVec3(const int32_t col) {
 	return glm::vec3{ ((col & 255u) / 256.),(((col & (255u << 8)) >> 8) / 256.),(((col & (255u << 16)) >> 16) / 256.) };
 }
-
 
 using multiplayerscene::Entity;
 using multiplayerscene::User;

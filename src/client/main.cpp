@@ -1,3 +1,5 @@
+// (c) 2022 Bill Guastalla, Apache 2.0 License.
+
 #include "multiplayer_scene_client.h"
 #include "graphics.h"
 
@@ -74,7 +76,9 @@ int main(int argc, char** argv) {
 		Scene scene{ window,clientUser.id() };
 
 		glClearColor(0.4f, 0.4f, 0.7f, 1.0f);
-		while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
+		while (
+			(glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS) ||
+			!glfwWindowShouldClose(window))
 		{
 			Point userLocation{ vec3_to_point(scene.camera().m_position) };
 			std::vector<Entity> entities{ client.GetEntities(userLocation) };

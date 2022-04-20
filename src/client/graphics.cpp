@@ -1,6 +1,7 @@
+// (c) 2022 Bill Guastalla, Apache 2.0 License.
+
 #include "graphics.h"
 #include <glad/glad.h>
-
 #include <visualisations/graphics/Mesh.h>
 #include <visualisations/graphics/MeshGenerator.h>
 
@@ -25,7 +26,6 @@ void Scene::draw_frame()
 	m_generalShader.setVec3("lightPos", { 0.,5.,0. });
 	m_generalShader.setVec3("viewPos", m_camera.m_position);
 
-
 	Mesh m; // unnecessary to redo every frame.
 	MeshGenerator::generateCube(m); // unnecessary to redo every frame.
 	for (const auto& entity : m_entities) {
@@ -49,7 +49,6 @@ void Scene::draw_frame()
 		}
 	}
 	m2.clear();
-
 }
 
 void Scene::process_keyboard()
@@ -82,7 +81,6 @@ void Scene::process_keyboard()
 		cm += (int)Camera_Movement::RESET_POSITION;
 	m_camera.ProcessKeyboard((Camera_Movement)cm, 0.01f);
 
-
 	int leftMouse = glfwGetMouseButton(p_window, GLFW_MOUSE_BUTTON_1);
 	double xPos{ 0.0 }, yPos{ 0.0 };
 	glfwGetCursorPos(p_window, &xPos, &yPos);
@@ -105,5 +103,4 @@ void Scene::process_keyboard()
 	}
 	else
 		m_firstMouse = true;
-
 }

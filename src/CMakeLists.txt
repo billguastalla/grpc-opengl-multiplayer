@@ -37,19 +37,9 @@ target_link_libraries(mps_grpc_proto
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
-# multiplayer_scene_helper
-add_library(multiplayer_scene_helper
-  "helper.h"
-  "helper.cc")
-target_link_libraries(multiplayer_scene_helper
-  mps_grpc_proto
-  ${_REFLECTION}
-  ${_GRPC_GRPCPP}
-  ${_PROTOBUF_LIBPROTOBUF})
-
 add_executable(multiplayer_scene_server "server/multiplayer_scene_server.cc")
 target_include_directories(multiplayer_scene_server PUBLIC ${glm_SOURCE_DIR})
-target_link_libraries(multiplayer_scene_server mps_grpc_proto multiplayer_scene_helper ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
+target_link_libraries(multiplayer_scene_server mps_grpc_proto ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
 
 # Make symbols for anything you need from visualisations here.
 add_library(client_graphics_imports
@@ -69,5 +59,4 @@ target_include_directories(client_graphics_imports PUBLIC ${stb_SOURCE_DIR} ${gl
 add_executable(multiplayer_scene_client "client/multiplayer_scene_client.h" "client/graphics.h" "client/graphics.cpp" "client/main.cpp")
 target_include_directories(multiplayer_scene_client PUBLIC ${stb_SOURCE_DIR} ${visualisations_SOURCE_DIR} ${glm_SOURCE_DIR})
 # TODO: link visualisations in.
-target_link_libraries(multiplayer_scene_client mps_grpc_proto multiplayer_scene_helper glfw glad client_graphics_imports ${Boost_LIBRARIES} ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
-
+target_link_libraries(multiplayer_scene_client mps_grpc_proto glfw glad client_graphics_imports ${Boost_LIBRARIES} ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})

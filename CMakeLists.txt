@@ -17,7 +17,8 @@
 # See cmake_externalproject/CMakeLists.txt for all-in-one cmake build
 # that automatically builds all the dependencies before building multiplayer_scene.
 
-# .
+# Modifications: 2022 Bill Guastalla, Apache 2.0 License.
+
 cmake_minimum_required(VERSION 3.5.1)
 
 project(MULTIPLAYER_SCENE C CXX)
