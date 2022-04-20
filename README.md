@@ -31,8 +31,8 @@ Then do the usual
 
 ## Things that were borrowed
 
-The gRPC service was adapted from the examples. Some graphics utilities have been adapted
-from another piece of software visualisations, and some of these are also modified from Joey de Vries' 
+The gRPC service was adapted from google's [examples](https://grpc.io/docs/languages/cpp/basics/). Some graphics utilities have been imported
+from my own software [visualisations](https://github.com/billguastalla/visualisations) via cmake, and some of these are also modified from Joey de Vries' 
 tutorials on computer graphics.
 
 ## Future work
