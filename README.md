@@ -10,6 +10,10 @@ client where the other users are.
 
 The fun is in the fact that you can see other users moving around on the screen.
 
+![](https://billguastalla.com/binaries/multiplayer-scene/videos/quick-demo-2022-04-20-14-45-22-brief.gif)
+
+The longer version of this demo video is [here](https://billguastalla.com/binaries/multiplayer-scene/videos/quick-demo-2022-04-20-14-45-22.mp4).
+
 ## Usage
 
 Tested only on windows 10 x64, VS2022, using VCPKG.
